@@ -1,0 +1,13 @@
+# default: on
+# description: The telnet server serves telnet sessions; it uses \
+#       unencrypted username/password pairs for authentication.
+service mcas
+{
+        disable         = no
+        flags           = REUSE
+        socket_type     = stream
+        wait            = no
+        user            = idealsys
+        server          = /home/idealsys/bin/McasTcp
+        log_on_failure  += USERID
+}

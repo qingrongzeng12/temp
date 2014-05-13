@@ -1,0 +1,16 @@
+service mpos_mobile_ssl
+{
+        disable = no
+        flags = REUSE
+        socket_type = stream
+        wait = no
+        user = root
+        log_on_failure  += USERID
+        env = HOME=/fep
+        server = /fep/comm/TCPSERVER.thread
+        server_args = --length_attr=hex --length_radix=16 --notify --raw_dir=mpos_ssl --verbose --recv_timeout=30 --exit_timewait=3 --ssl_cert=/fep/parameter/ca.pem --ssl_private=/fep/parameter/key.pem --ssl_pwd=/fep/parameter/plog.txt
+        # per_source = 5
+        # log_on_success += DURATION USERID
+        # bind =
+        # redirect =
+}
