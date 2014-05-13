@@ -1,0 +1,62 @@
+`` strrchr -- 查找一个字符c在一个字符串str中末次出现的位置，并返回字符串中的这个位置到结束的所有字符。如果未能找到指定字符，那么函数将返回NULL.
+   char *strrchr(const char *str, char c);
+ 
+
+
+`` strtol -- 根据参数base，将参数nptr字符串转换成长整型.
+   long int strtol(const char *nptr, char **endptr, int base);
+
+
+`` lseek -- 随机访问文件,返回新的偏移量，出错返回-1
+   off_t  lseek(int handle, off_t offset, int fromwhere);
+
+
+`` feof  -- 判断文件结尾，结束返回1，未结束返回0
+    #define feof(_stream)  ((_stream) ->_flag & ——IOEOF)
+
+
+`` strncmp -- 字符串比较。str1为第一个要比较的字符串，str2为第二个要比较的字符串，n为指定的str1与str2的比较的字符数，相等返回0.
+   int strncmp(char* str1, char* str2, int n);
+
+
+`` atexit -- 可以注册终止处理程序.
+   int atexit(void (*function)(void));
+
+
+`` memmove -- 由src所指内存区域复制count个字节到dest所指内存区域
+   void *memmove(void *dest, const void *src, size_t count);
+
+
+`` ftok -- 由一个路径名和项目ID产生一个键
+   key_t ftok(const char *pathname, int proj_id);
+
+
+`` fstat -- 由文件描述词取得文件状态
+   将参数fildes所指的文件状态，复制到参数buf所指的结构中(struct stat)
+   int fstat(int fildes,struct stat *buf);
+
+
+`` ftok -- 系统建立IPC通讯 （消息队列、信号量和共享内存） 时必须指定一个ID值。
+           通常情况下，该id值通过ftok函数得到
+   key_t ftok( const char * fname, int id )
+
+
+`` ioctl -- 是设备驱动程序中对设备的I/O通道进行管理的函数;成功为0，出错为-1
+   int ioctl(int handle, int cmd,[int *argdx, int argcx]);
+
+
+`` getpeername -- 获取与套接口相连的端地址
+   int PASCAL FAR getpeername( SOCKET s, struct sockaddr FAR* name,int FAR* namelen);
+   用于从端口s中获取与它捆绑的端口名，并把它存放在sockaddr类型的name结构中。
+   它适用于数据报或流类套接口。若无错误发生，getpeername()返回零。否则的话，返回SOCKET_ERROR
+
+`` getsockname -- 用于获取一个套接字的名字。它用于一个已捆绑或已连接套接字s，本地地址将被返回
+   int PASCAL FAR getsockname( SOCKET s, struct sockaddr FAR* name,int FAR* namelen);
+   s：标识一个已捆绑套接口的描述字。name：接收套接口的地址（名字）。namelen：名字缓冲区长度。
+   若无错误发生，getsockname()返回0。否则的话，返回SOCKET_ERROR错误
+
+
+
+
+
+   

@@ -1,0 +1,53 @@
+
+sed全名叫stream editor，流编辑器，用程序的方式来编辑文本，基本上是正则模式匹配.
+
+$ cat pets.txt
+This is my cat
+
+s表示替换命令，/my/表示匹配my，/Hao Chen’s/表示把匹配替换成Hao Chen’s，/g 表示一行上的替换所有的匹配
+$ sed "s/my/Hao Chen's/g" pets.txt
+This is Hao Chen's cat
+
+上面的sed并没有对文件的内容改变，只是把处理过后的内容输出，如果你要写回文件，你可以使用重定向，如：
+$ sed "s/my/Hao Chen's/g" pets.txt > hao_pets.txt
+或使用 -i 参数直接修改文件内容：
+$ sed -i "s/my/Hao Chen's/g" pets.txt
+
+
+在每一行最前面加点东西：
+$ sed 's/^/#/g' pets.txt
+#This is my cat
+
+在每一行最后面加点东西：
+$ sed 's/$/ --- /g' pets.txt
+This is my cat ---
+
+
+正则表达式:
+^ 表示一行的开头。如：/^#/ 以#开头的匹配。
+$ 表示一行的结尾。如：/}$/ 以}结尾的匹配。
+\< 表示词首。 如 \<abc 表示以 abc 为首的詞。
+\> 表示词尾。 如 abc\> 表示以 abc 結尾的詞。
+. 表示任何单个字符。
+* 表示某个字符出现了0次或多次。
+[ ] 字符集合。 如：[abc]表示匹配a或b或c，还有[a-zA-Z]表示匹配所有的26个字符。如果其中有^表示反，如[^a]表示非a的字符
+
+
+比如我们要去掉某html中的tags：
+html.txt
+<b>This</b> is what <span style="text-decoration: underline;">I</span> meant. Understand?
+
+# 如果你这样的话，就会有问题
+$ sed 's/<.*>//g' html.txt
+ Understand?
+ 
+# 要解决上面的那个问题，就得像下面这样。
+# 其中的'[^>]' 指定了除了>的字符重复0次或多次。
+$ sed 's/<[^>]*>//g' html.txt
+This is what I meant. Understand?
+
+
+
+
+
+

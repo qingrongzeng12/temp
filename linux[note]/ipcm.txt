@@ -1,0 +1,31 @@
+
+1. What command do you run to check the shared memory allocation on a system? 
+ipcs
+2. What command do you run to manually deallocate shared memory on a system?
+ipcrm
+http://www.52rd.com/Blog/Detail_RD.Blog_wqyuwss_6519.html
+
+取得ipc信息：
+ipcs [-m|-q|-s]
+-m     输出有关共享内存(shared memory)的信息
+-q      输出有关信息队列(message queue)的信息
+-s      输出有关“遮断器”(semaphore)的信息
+# ipcs -m
+IPC status from <running system> as of 2007年04月10日 星期二 18时32分18秒 CST
+T         ID      KEY        MODE        OWNER    GROUP
+Shared Memory:
+m          0   0x50000d43 --rw-r--r--     root     root
+m        501   0x1e90c97c --rw-r-----   oracle      dba
+#ipcs |grep oracle|awk   '{print $2}
+   501
+
+删除ipc(清除共享内存信息)
+ipcrm -m|-q|-s shm_id
+%ipcrm -m 501
+for i in `ipcs |grep oracle|awk   '{print $2}'`
+do
+ipcrm -m $i
+ipcrm -s $i
+done
+
+ps -ef|egrep "ora_|asm_"|grep -v grep |grep -v crs|awk '{print $2}' |xargs kill -9

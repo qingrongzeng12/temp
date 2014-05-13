@@ -1,0 +1,393 @@
+Shell脚本之awk详解
+
+一．基本介绍
+1.awk:
+  awk是一个强大的文本分析工具，在对文本文件的处理以及生成报表，awk是无可替代的。awk认为文本文件都是结构化的，它将每一个输入行定义为一个记录，行中的每个字符串定义为一个域(段)，域和域之间使用分割符分割。
+
+2.功能：流控制、数学运算、进程控制、内置的变量和函数、循环和判断
+
+3.工作原理：
+awk 会把每行进行一个拆分，用相应的命令对拆分出来的“段”进行处理。
+（1）行工作模式，读入文件的每一行，会把一行的内容，存到$0里
+（2）使用内置的变量FS(段的分隔符，默认用的是空白字符)，分割这一行，把分割出来的每个段存到相应的变量$(1-100)
+（3）输出的时候按照内置变量OFS(out FS)，输出
+（4）读入下一行继续操作
+简单实例
+[root@tx3 ~]# echo "this is a book" > awk.txt
+[root@tx3 ~]# awk '{print $2,$1,$3,$4}' awk.txt
+is this a book
+
+
+
+4.   Awk常用内置变量表：
+1 $0             当前记录（作为单个变量）  
+2 $1~$n          当前记录的第n个字段，字段间由FS分隔  
+3 FS             输入字段分隔符 默认是空格  
+4 NF             当前记录中的字段个数，就是有多少列  
+5 NR             已经读出的记录数，就是行号，从1开始  
+6 RS             输入的记录他隔符默 认为换行符  
+7 OFS            输出字段分隔符 默认也是空格  
+8 ORS            输出的记录分隔符，默认为换行符  
+9 ARGC           命令行参数个数  
+10 ARGV           命令行参数数组  
+11 FILENAME       当前输入文件的名字  
+12 IGNORECASE     如果为真，则进行忽略大小写的匹配  
+13 ARGIND         当前被处理文件的ARGV标志符  
+14 CONVFMT        数字转换格式 %.6g  
+15 ENVIRON        UNIX环境变量  
+16 ERRNO          UNIX系统错误消息  
+17 FIELDWIDTHS    输入字段宽度的空白分隔字符串  
+18 FNR            当前记录数  
+19 OFMT           数字的输出格式 %.6g  
+20 RSTART         被匹配函数匹配的字符串首  
+21 RLENGTH        被匹配函数匹配的字符串长度  
+
+二．print的简单使用
+例：打印整行: $0
+[root@tx3 ~]# cp /etc/passwd p1
+[root@tx3 ~]# awk '{print $0}' p1
+
+例：打印每行的最后一个字段: $NF
+[root@tx3 ~]# awk -F : '{print $NF}' p1
+
+例：打印第三个字段: $3
+[root@tx3 ~]# awk -F : '{print $3}' p1
+
+例：打印第一行NR==1
+[root@tx3 ~]# awk 'NR==1{print $0}' p1
+root:x:0:0:root:/root:/bin/bash
+
+例：打印最后一行
+[root@tx3 ~]# awk 'END{print $0}' p1
+tx:x:500:500:tx:/home/tx:/bin/bash
+
+例：打印第一行最后一个字段
+[root@tx3 ~]# awk -F: 'NR==1{print $NF}' p1
+/bin/bash
+
+例：打印最后一行最后一个字段
+[root@tx3 ~]#awk -F: 'END{print $NF}' p1
+
+例：打印每行的倒数第二个字段，并在其后打印你好
+[root@tx3 ~]# awk -F: '{print $(NF-1),"nihao"}' p1
+/root nihao
+/bin nihao
+/sbin nihao
+
+例：打印行号
+[root@tx3 ~]# awk '{print NR,$0}' p1
+1 root:x:0:0:root:/root:/bin/bash
+2 bin:x:1:1:bin:/bin:/sbin/nologin
+3 daemon:x:2:2:daemon:/sbin:/sbin/nologin
+
+例：打印当前系统环境变量的某个特定值
+[root@tx3 ~]# awk 'BEGIN{print ENVIRON["PATH"];}'
+/usr/kerberos/sbin:/usr/kerberos/bin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin
+
+例： 用:分割，删除第2个字段
+[root@tx3 ~]# awk 'BEGIN{FS=":";OFS=":"}{print $1,$3,$4,$5,$6,$7}' p1
+root:0:0:root:/root:/bin/bash
+bin:1:1:bin:/bin:/sbin/nologin
+daemon:2:2:daemon:/sbin:/sbin/nologin
+
+
+三．printf的使用
+
+print format 生成报表
+%d        十进制有符号整数  
+%u        十进制无符号整数  
+%f        浮点数  
+%s        字符串  
+%c        显示字符的ASCII码  
+%p        指针的值  
+%e        科学技术法显示数值  
+%x        %X 无符号以十六进制表示的整数  
+%o        无符号以八进制表示的整数  
+%g        %G 以科学计数法或浮点数的格式显示数值  
+%%        显示其自身  
+修饰符：  
+-:  左对齐     
++:  显示数值符号  
+N： 显示
+
+-F 指定段的分隔符
+例：（1）生成报表
+
+
+例：（2）小数问题
+对小数取保留位的时候，四舍五入
+对小数取整，不进行四舍五入
+[root@tx3 ~]# cat awk.1
+23.3456 11.234 45.67
+[root@tx3 ~]# awk '{printf "%.2f\t%.2f\t%.2f\n",$1,$2,$3}' awk.1
+23.3511.2345.67
+
+四．awk的使用
+
+（1）正则表达式
+\(\)   \{\} 不支持
+. * ^ $ ? + [] | \< \> ()  可以直接使用
+
+例[root@tx3 ~]# awk '/^$/{print "this is an empty line"}' /etc/inittab
+this is an empty line
+this is an empty line
+this is an empty line
+this is an empty line
+this is an empty line
+this is an empty line
+this is an empty line
+this is an empty line
+this is an empty line
+
+例[root@tx3 ~]# awk -F: '/^root/{print $1,$NF}' /etc/passwd
+root /bin/bash
+
+例[root@tx3 ~]# awk -F: '!/^root/{print $1,$NF}' /etc/passwd|head -3  
+bin /sbin/nologin
+daemon /sbin/nologin
+adm /sbin/nologin
+
+（2）关系运算符
+> < == != >= <=
+~（匹配） !~（不匹配）
+例[root@tx3 ~]# cp /etc/passwd p1
+[root@tx3 ~]# awk -F: '$3 == 0 {print $1}' p1
+Root
+
+例[root@tx3 ~]# awk -F: '$3 != 0{ print $1}' p1 | head -2
+bin
+Daemon
+
+例[root@tx3 ~]# awk -F: '$3 < 2 {print $1}' p1
+root
+bin
+
+（3）逻辑运算符
+&& || !
+与 或 非
+例[root@tx3 ~]# awk -F: '$3 > 0 && $3 < 10 {print $1, $3}' p1 |head -2
+bin 1
+daemon 2
+
+例[root@tx3 ~]#  awk -F: '$3 > 10 || $3 < 5 {print $1,$3}' p1 |head -6
+root 0
+bin 1
+daemon 2
+adm 3
+lp 4
+operator 11
+
+（4）算数运算符
++ - * / %（取模(余数)） ^（幂运算）
+
+例：输出名字，总成绩，平均成绩
+[root@tx3 ~]# cat cj
+tx 90 86 86
+tx1 89 78 85
+tx2 79 80 85   
+
+[root@tx3 ~]#  awk '{print $1,$2+$3+$4,($2+$3+$4)/3}' cj
+tx 262 87.3333
+tx1 252 84
+tx2 244 81.3333
+
+[root@tx3 ~]# awk '{printf"%-5s %3d %.2f\n",$1,$2+$3+$4,($2+$3+$4)/3}' cj
+tx    262 87.33
+tx1   252 84.00
+tx2   244 81.33
+
+（5）BEGIN  END
+BEGIN{ 动作;动作;... }  在处理文件之前，要执行的动作；只执行一次
+END{ 动作;动作;... }    在处理完文件之后，要执行的动作；只执行一次
+BEGIN ：可以给文件添加标题、定义变量、定义文件的分隔符
+END：汇总的操作
+getline可以从管道和标准输入读取输入，然后传递给变量。
+
+例：
+[root@tx3 ~]# awk 'BEGIN{"date"| getline a}{print}END{print a}' cj
+tx 90 86 86
+tx1 89 78 85
+tx2 79 80 85  
+Thu Feb  7 12:39:25 CST 2013
+
+五．awk里的流控制和循环
+（1）简单的条件判断
+语法：(表达式 ? 值1 : 值2) 如果表达式成立，输出值1；否则输出值2
+[root@tx3 ~]# cat num
+2 8 9
+8 4 6
+3 5 7
+[root@tx3 ~]# awk '{print ( $1 > $2 ? $1 : $2)}' num
+8
+8
+5
+
+（2）if判断
+语法：
+{ if (表达式
+{
+                动作1;动作2;...
+}
+}
+   如果表达式成立，那么执行动作。
+[root@tx3 ~]# awk '{if ($2>=80 && $2 <=100) {print $1,"great"} else {print $1, "good"}}' cj
+tx great
+tx1 great
+tx2 good
+（2）多支判断
+
+{
+if (表达式)
+{ 动作1;动作2;...}
+else if (表达式)
+{ 动作1;动作2;...}
+else if (表达式)
+{ 动作1;动作2;...}
+......
+else
+{ 动作1;动作2;...}
+}
+
+[root@tx3 ~]# cat cj
+tx 90 86 86
+tx1 89 78 85
+tx2 79 80 85  
+tx3 80 70 60
+tx4 75 85 65
+tx5 78 62 80
+
+判断的标准：
+90-100 A
+80-89  B
+70-79  C
+60-69  D
+0-59   E
+[root@tx3 ~]# awk '{ if ($2 >= 90 && $2 <= 100) {print $1,"A"} else if ($2 >= 80 && $2 < 90) {print $1,"B"} else if ($2 >= 70 && $2 < 80) {print $1,"C"} else if ($2 >= 60 && $2 < 70) {print $1,"D"} else {print $1,"E"} }' cj
+tx A
+tx1 B
+tx2 C
+tx3 B
+tx4 C
+tx5 C
+
+（3）循环while
+
+语法：'var=初值;while (表达式){动作1;...更新变量的动作;}'
+例：
+[root@tx3 ~]# awk -F: '{i=1; while (i<=NF) {print $i;i++}}' p1 | head -7
+root
+x
+0
+0
+root
+/root
+/bin/bash
+
+例. 方法一
+[root@tx3 ~]# awk -F: '{i=NF; while (i>=2) {printf $i ":";i--};print $1}' p1
+/bin/bash:/root:root:0:0:x:root
+/sbin/nologin:/bin:bin:1:1:x:bin
+/sbin/nologin:/sbin:daemon:2:2:x:daemon
+/sbin/nologin:/var/adm:adm:4:3:x:adm
+
+例. 方法二
+[root@tx3 ~]# awk 'BEGIN { FS=":" } { i=NF; while (i>=2) {printf $i ":";i--} print $1}' p1
+/bin/bash:/root:root:0:0:x:root
+/sbin/nologin:/bin:bin:1:1:x:bin
+/sbin/nologin:/sbin:daemon:2:2:x:daemon
+
+(4)for循环
+
+语法：
+{
+for(表达式)
+{动作1;...}
+}
+表达式：分为3部分：
+(1)初始化表达式 i=1
+(2)测试表达式   i<10
+(3)更新测试表达式 i++
+语句：
+next 处理输入行的下一个输入行
+exit 退出
+continue 结束本次循环
+break 跳出循环
+
+
+例
+[root@tx3 ~]# awk 'BEGIN {FS=":"} {for(i=NF;i>=2;i--) {printf $i ";"};print $1}' p1
+/bin/bash;/root;root;0;0;x;root
+/sbin/nologin;/bin;bin;1;1;x;bin
+/sbin/nologin;/sbin;daemon;2;2;x;daemon
+/sbin/nologin;/var/adm;adm;4;3;x;adm
+
+例
+[root@tx3 ~]# cat num
+2 8 9
+8 4 6
+3 5 7
+[root@tx3 ~]# awk '{ max=0; i=1; while (i<=NF) { if (max<$i) {max=$i} i++} print max}' num
+9
+8
+7
+
+（5）awk数组
+例
+图片1.jpg
+
+例   使用变量作为数组下标
+图片2.jpg
+另外一种读取方式（这种是无序的，j是变量，a是数组）
+
+图片3.jpg
+数组有序
+图片4.jpg
+
+（6）函数
+@1split 切割字符串
+split("等待被切割的字符串",数组名,"切割用的分隔符")
+[root@tx3 ~]# awk 'BEGIN{split("2012/08/23",da,"/");print da[2],da[3],da[1]}'
+08 23 2012
+
+@2toupper() 小写转大写
+tolower() 大写转小写
+[root@tx3 ~]# awk '{print toupper($0)}' p1 |head -3
+ROOT:X:0:0:ROOT:/ROOT:/BIN/BASH
+BIN:X:1:1:BIN:/BIN:/SBIN/NOLOGIN
+DAEMON:X:2:2:DAEMON:/SBIN:/SBIN/NOLOGIN
+
+@3sub()  局部替换
+gsub() 全局替换
+sub(/要替换的内容/,"替换成什么内容")
+gsub(/要替换的内容/,"替换成什么内容")
+gsub(/要替换的内容/,"替换成什么内容",指定字段如$7)
+例：
+[root@tx3 ~]# awk -F: '{sub(/root/,"r00t");print}' p1
+r00t:x:0:0:root:/root:/bin/bash
+
+例：
+[root@tx3 ~]# awk -F: '{gsub(/root/,"r00t");print}' p1
+r00t:x:0:0:r00t:/r00t:/bin/bash
+operator:x:11:0:operator:/r00t:/sbin/nologin
+
+例：
+[root@tx3 ~]# awk -F[:/] '{gsub(/root/,"r00t",$7);print}' p1
+root x 0 0 root  r00t  bin bash
+operator x 11 0 operator  r00t  sbin nologin
+
+@4.length() 计算字符串的长度
+[root@tx3 ~]# awk -F: '{print length($1),$1}' p1
+4 root
+3 bin
+6 daemon
+3 adm
+
+@5. 数学计算
+[root@tx3 ~]# awk 'BEGIN{print sin(30)}'
+-0.988032
+[root@tx3 ~]# awk 'BEGIN{print cos(60)}'
+-0.952413
+[root@tx3 ~]# awk 'BEGIN{print int(22/6)}'
+3
+[root@tx3 ~]# awk 'BEGIN{print sqrt(3)}'
+1.73205

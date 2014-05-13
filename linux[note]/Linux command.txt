@@ -1,0 +1,34 @@
+`` jobs -l     查看后台运行的进程
+
+`` command &   让进程在后台运行
+
+`` fg %n       让后台运行的进程n到前台来
+
+`` bg %n       让进程n到后台去执行
+
+`` kill -9     强制结束进程
+
+`` ps -efjc     显示守护进程
+     -a显示包括其它进程， -x显示没有控制终端的进程状态
+     -j显示与作业相关的信息， 
+
+
+`` lsof 查看打开的文件
+
+`` strace -- trace system calls and signals
+
+Linux守护进程：
+ init, 系统守护进程，负责启动各运行层次特定的系统服务
+ keventd，为在内核中运行计划执行的函数提供进程上下文
+ kapmd, 对高级电源管理提供支持
+ kswapd, 页面调出守护进程，将脏页面以低速写到磁盘上
+ 
+ bdflush,kupdated, 将高速缓存中的数据冲洗到磁盘上
+ portmap, 端口映射守护进程，提供将RPC(远程过程调用）程序号映射为网络端口号的服务。
+ syslogd， 把系统消息记入日志
+
+ inetd, xinetd， 侦听系统网络接口
+ nfsd,lockd,rpciod，提供对网络文件系统（NFS,Network File System)的支持
+ cron，在指定的日期和时间指定的命令
+
+守护进程无控制终端，大多数守护进程的父进程是init进程
