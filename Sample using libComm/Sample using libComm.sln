@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CommAssist", "CommAssist\CommAssist.vcxproj", "{8EF4406A-9A6B-42D6-92F5-31C02864A4EE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TimeSync", "TimeSync\TimeSync.vcxproj", "{E7AC700E-004F-452E-8604-2B446CE73203}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8EF4406A-9A6B-42D6-92F5-31C02864A4EE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8EF4406A-9A6B-42D6-92F5-31C02864A4EE}.Debug|Win32.Build.0 = Debug|Win32
+		{8EF4406A-9A6B-42D6-92F5-31C02864A4EE}.Release|Win32.ActiveCfg = Release|Win32
+		{8EF4406A-9A6B-42D6-92F5-31C02864A4EE}.Release|Win32.Build.0 = Release|Win32
+		{E7AC700E-004F-452E-8604-2B446CE73203}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E7AC700E-004F-452E-8604-2B446CE73203}.Debug|Win32.Build.0 = Debug|Win32
+		{E7AC700E-004F-452E-8604-2B446CE73203}.Release|Win32.ActiveCfg = Release|Win32
+		{E7AC700E-004F-452E-8604-2B446CE73203}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
